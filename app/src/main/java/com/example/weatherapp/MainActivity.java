@@ -8,6 +8,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.MalformedURLException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -50,16 +54,31 @@ public class MainActivity extends AppCompatActivity {
             Future futureInfo = exec.submit(getWeatherInfo_task);
             weatherInfo = futureInfo.get().toString();
 
+            //Convert the String into a JSON Object to make it easier to read the Infos out of it
+            JSONObject weatherInfo_JSON = new JSONObject(weatherInfo);          //weatherInfo_JSON ist die ganze JSON Datei.
+            String main = (String) weatherInfo_JSON.getString("main");    //main Variable ist zwar vom Typ String aber der wien array geschrieben. Desawegen können wir es in ein JSON Array umwandeln um einfacher auf die Elemente zugreifen zu können
+
+            //JSONArray array = new JSONArray(main);
+            //String a = (String) array.getJSONObject(0).get("temp");
+
+            //TODO: Lese aus dem String namens main den Fahrenhheit-Wert aus. Dieser befidnet sich zwishcen " "temp": " und dem nächsten Komma " , "
+
+
             //Some Debugging info
             Log.i("City", cityName);
             Log.i("MYInfo", weatherInfo);
             Log.i("MYURL", url);
+            Log.i("main:", main);
+            //Log.i("a", a);
+
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
