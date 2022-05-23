@@ -7,12 +7,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
+import java.text.DecimalFormat;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
     Button getWeatherBTN;
     EditText cityNameET;
     String cityName;
-    //Die Url des API Calls mit dem Namen der Stadt aus dem EditText!
-
+    TextView temperatureTW;
     String weatherInfo;
+    private static final DecimalFormat df = new DecimalFormat("0.00");      //Needed to round up the temperature before displaying it in the app
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         getWeatherBTN = findViewById(R.id.getWeather_btn);
         cityNameET = findViewById(R.id.cityName_et);
+        temperatureTW = findViewById(R.id.temperature_tw);
 
         getWeatherBTN.setOnClickListener(v -> onClick());
     }
@@ -54,22 +56,24 @@ public class MainActivity extends AppCompatActivity {
             Future futureInfo = exec.submit(getWeatherInfo_task);
             weatherInfo = futureInfo.get().toString();
 
-            //Convert the String into a JSON Object to make it easier to read the Infos out of it
+            //Convert the String into a JSON Object to make it easier to read the Infos out of it!
             JSONObject weatherInfo_JSON = new JSONObject(weatherInfo);          //weatherInfo_JSON ist die ganze JSON Datei.
-            String main = (String) weatherInfo_JSON.getString("main");    //main Variable ist zwar vom Typ String aber der wien array geschrieben. Desawegen können wir es in ein JSON Array umwandeln um einfacher auf die Elemente zugreifen zu können
 
-            //JSONArray array = new JSONArray(main);
-            //String a = (String) array.getJSONObject(0).get("temp");
+            //Get the temperature from the JSON-Object as a String
+            String temperature_kelvin = (String) weatherInfo_JSON.getJSONObject("main").getString("temp");
 
-            //TODO: Lese aus dem String namens main den Fahrenhheit-Wert aus. Dieser befidnet sich zwishcen " "temp": " und dem nächsten Komma " , "
+            float temperatur_Celsius = (float) ((Float.parseFloat(temperature_kelvin) - 273.15));
+
+            //Set the temperature-TextView in in App as the temperature_Ceslius value. temperature_celsius is round to 2 decimal places.
+            temperatureTW.setText(df.format(temperatur_Celsius) + "°C");
+            temperatureTW.setVisibility(View.VISIBLE);
 
 
             //Some Debugging info
             Log.i("City", cityName);
             Log.i("MYInfo", weatherInfo);
             Log.i("MYURL", url);
-            Log.i("main:", main);
-            //Log.i("a", a);
+
 
 
         } catch (MalformedURLException e) {
