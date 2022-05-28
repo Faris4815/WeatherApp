@@ -43,10 +43,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClick(){
 
-        //Notwendig, damit die korrekte URL für den API Call erzeugt wird.
+        //Necessary to create the correct URL for the API call
         cityName = cityNameET.getText().toString();
-        //Hatte den url String estmal oben deklariert aber das geht offenbar nicht, weil dann der String cityName immer null ist und die url somit nicht mehr korrekt ist.
-        //Ich vermute, es hat was damit zu tun das String immutable sind. Jedenfalls muss der String hier initialisiert werden.
+
+        //Earlier i declared the Url String above, where the other ariables are as well, but thats not working because the String cityName is null then and therefor the Url is not correct anymore.
+        //I assume it has to do with the fact that Strings are immutable. Anyway, the Strinf has to be initialized here.
         String url = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + "9846ed3dc28fa293652be575f76e8c0d";
 
         try {
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             weatherInfo = futureInfo.get().toString();
 
             //Convert the String into a JSON Object to make it easier to read the Infos out of it!
-            JSONObject weatherInfo_JSON = new JSONObject(weatherInfo);          //weatherInfo_JSON ist die ganze JSON Datei.
+            JSONObject weatherInfo_JSON = new JSONObject(weatherInfo);          //weatherInfo_JSON is the whole JSON-file
 
             //Get the temperature from the JSON-Object as a String
             String temperature_kelvin = (String) weatherInfo_JSON.getJSONObject("main").getString("temp");
